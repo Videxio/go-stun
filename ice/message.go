@@ -1,6 +1,6 @@
 package ice
 
-import "github.com/pixelbender/go-stun/stun"
+import "github.com/Videxio/go-stun/stun"
 
 // STUN attributes introduced by the RFC 5245 Section 19.1
 const (
@@ -27,10 +27,20 @@ func GetAttributeName(at uint16) (n string) {
 }
 
 var attrCodecs = map[uint16]stun.AttrCodec{
-	AttrPriority:       nil,
-	AttrUseCandidate:   nil,
-	AttrIceControlled:  nil,
-	AttrIceControlling: nil,
+	AttrPriority:       emptyCodec{},
+	AttrUseCandidate:   emptyCodec{},
+	AttrIceControlled:  emptyCodec{},
+	AttrIceControlling: emptyCodec{},
+}
+
+type emptyCodec struct{}
+
+func (c emptyCodec) Encode(w stun.Writer, v interface{}) error {
+	return nil
+}
+
+func (c emptyCodec) Decode(r stun.Reader) (interface{}, error) {
+	return true, nil
 }
 
 // GetAttributeCodec returns a STUN attribute codec for TURN.

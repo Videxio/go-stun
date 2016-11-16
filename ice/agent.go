@@ -1,8 +1,8 @@
 package ice
 
-import (
+/*import (
 	"time"
-)
+)*/
 
 // Agent represents an ICE agent.
 type Agent struct {
@@ -27,7 +27,7 @@ var DefaultConfig = &Config{
 //	Networks: []stirng{Transport: }
 }
 
-func Gather(config *Config) (*Agent, error) {
+/*func Gather(config *Config) (*Agent, error) {
 	if config == nil {
 		config = DefaultConfig
 	}
@@ -46,4 +46,4 @@ func Gather(config *Config) (*Agent, error) {
 		}
 	}
 	return &Agent{local: local}, nil
-}
+}*/

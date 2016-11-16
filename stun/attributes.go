@@ -151,7 +151,7 @@ func (at Attributes) String(id uint16) string {
 		case (fmt.Stringer):
 			return v.String()
 		default:
-			return fmt.Sprintf("%", r)
+			return fmt.Sprintf("%v", r)
 		}
 	}
 	return ""

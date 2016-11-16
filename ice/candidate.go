@@ -1,7 +1,7 @@
 package ice
 
 import (
-	"github.com/pixelbender/go-stun/stun"
+	"github.com/Videxio/go-stun/stun"
 	"net"
 )
 

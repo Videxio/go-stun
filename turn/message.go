@@ -2,7 +2,7 @@ package turn
 
 import (
 	"encoding/binary"
-	"github.com/pixelbender/go-stun/stun"
+	"github.com/Videxio/go-stun/stun"
 	"reflect"
 )
 
