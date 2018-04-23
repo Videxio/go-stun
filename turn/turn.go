@@ -1,6 +1,7 @@
 package turn
 
 import (
+	"crypto/md5"
 	"crypto/tls"
 	"errors"
 	"github.com/Videxio/go-stun/stun"
@@ -55,4 +56,12 @@ func Allocate(uri, username, password string) (*Conn, error) {
 		return NewConn(c, addr.(*stun.Addr)), nil
 	}
 	return nil, ErrNoAllocationResponse
+}
+
+func LongTermAuthKey(username, password, realm string) func(attrs stun.Attributes) ([]byte, error) {
+	return func(attrs stun.Attributes) ([]byte, error) {
+		h := md5.New()
+		h.Write([]byte(username + ":" + realm + ":" + password))
+		return h.Sum(nil), nil
+	}
 }
