@@ -146,7 +146,7 @@ func (r *reader) Available() int {
 
 func (r *reader) Next(n int) ([]byte, error) {
 	p := r.pos + n
-	if len(r.buf) < r.pos+n {
+	if len(r.buf) < p {
 		return nil, io.EOF
 	}
 	off := r.pos

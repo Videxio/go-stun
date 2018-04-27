@@ -42,8 +42,10 @@ func (enc *Encoder) Encode(m *Message) ([]byte, error) {
 	copy(h[4:], m.Transaction)
 
 	for at, v := range m.Attributes {
+		bPos := w.pos
 		b := w.Next(4)
 		p := w.pos
+
 		codec := enc.getAttrCodec(at)
 		if codec == nil {
 			return nil, &errUnknownAttrCodec{at}
@@ -52,6 +54,8 @@ func (enc *Encoder) Encode(m *Message) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		b = w.buf[bPos : bPos+4]
 		n := w.pos - p
 		be.PutUint16(b, at)
 		be.PutUint16(b[2:], uint16(n))
@@ -64,6 +68,7 @@ func (enc *Encoder) Encode(m *Message) ([]byte, error) {
 			}
 		}
 	}
+
 	if m.Key == nil && enc.GetAuthKey != nil {
 		key, err := enc.getAuthKey(m.Attributes)
 		if err != nil {
@@ -71,6 +76,8 @@ func (enc *Encoder) Encode(m *Message) ([]byte, error) {
 		}
 		m.Key = key
 	}
+
+	h = w.buf[0:20]
 	if m.Key != nil {
 		be.PutUint16(h[2:], uint16(w.pos+4))
 		p := w.pos
@@ -80,6 +87,8 @@ func (enc *Encoder) Encode(m *Message) ([]byte, error) {
 		// TODO: sum into byte slice
 		copy(b[4:], integrity(w.buf[:p], m.Key))
 	}
+
+	h = w.buf[0:20]
 	if enc.Fingerprint {
 		be.PutUint16(h[2:], uint16(w.pos-12))
 		p := w.pos
@@ -88,6 +97,8 @@ func (enc *Encoder) Encode(m *Message) ([]byte, error) {
 		be.PutUint16(b[2:], 4)
 		be.PutUint32(b[4:], fingerprint(w.buf[:p]))
 	}
+
+	h = w.buf[0:20]
 	be.PutUint16(h[2:], uint16(w.pos-20))
 	return w.buf[:w.pos], nil
 }
@@ -115,7 +126,8 @@ type writer struct {
 	pos int
 }
 
-func (w *writer) Next(n int) (b []byte) {
+// NOTE: This invalidates previous buffer addresses (allocates new buffer)
+func (w *writer) Next(n int) (ret []byte) {
 	p := w.pos + n
 	if len(w.buf) < p {
 		b := make([]byte, (1+((p-1)>>10))<<10)
@@ -124,6 +136,7 @@ func (w *writer) Next(n int) (b []byte) {
 		}
 		w.buf = b
 	}
-	b, w.pos = w.buf[w.pos:p], p
+	ret = w.buf[w.pos:p]
+	w.pos = p
 	return
 }
