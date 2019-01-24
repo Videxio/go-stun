@@ -105,11 +105,15 @@ func (dec *Decoder) Decode(b []byte, key []byte) (*Message, error) {
 					return nil, err
 				}
 			}
-			sum := integrity(r.buf[:p], key)
-			if !bytes.Equal(attr.([]byte), sum) {
-				return nil, ErrIntegrityCheckFailure
+			// NOTE: RFC 5389 states that "long-term credential mechanism cannot be used to protect indications", but here we simply ignore any integrity attribute instead.
+			// This is a workaround for the Microsoft Edge browser, which has been observed to put this attribute in send indications.
+			if !m.IsType(TypeIndication) {
+				sum := integrity(r.buf[:p], key)
+				if !bytes.Equal(attr.([]byte), sum) {
+					return nil, ErrIntegrityCheckFailure
+				}
+				m.Key = key
 			}
-			m.Key = key
 			d = nil
 		case AttrFingerprint:
 			be.PutUint16(h[2:], uint16(p-12))
