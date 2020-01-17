@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"crypto/tls"
 	"errors"
-	"github.com/Videxio/go-stun/stun"
+	"github.com/pexip/go-stun/stun"
 	"net"
 	"net/url"
 	"strings"

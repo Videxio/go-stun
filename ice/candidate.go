@@ -1,7 +1,7 @@
 package ice
 
 import (
-	"github.com/Videxio/go-stun/stun"
+	"github.com/pexip/go-stun/stun"
 	"net"
 )
 

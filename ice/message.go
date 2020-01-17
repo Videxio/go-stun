@@ -1,6 +1,6 @@
 package ice
 
-import "github.com/Videxio/go-stun/stun"
+import "github.com/pexip/go-stun/stun"
 
 // STUN attributes introduced by the RFC 5245 Section 19.1
 const (
